@@ -10,8 +10,8 @@ using TamagotchiAPI.Models;
 namespace TamagotchiAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210128202017_DescriptionOfPets")]
-    partial class DescriptionOfPets
+    [Migration("20210129161435_CreateModels")]
+    partial class CreateModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -107,35 +107,35 @@ namespace TamagotchiAPI.Migrations
 
             modelBuilder.Entity("TamagotchiAPI.Models.Feeding", b =>
                 {
-                    b.HasOne("TamagotchiAPI.Models.Pet", "Pets")
+                    b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
                         .WithMany("Feedings")
                         .HasForeignKey("PetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pets");
+                    b.Navigation("Pet");
                 });
 
             modelBuilder.Entity("TamagotchiAPI.Models.Playtime", b =>
                 {
-                    b.HasOne("TamagotchiAPI.Models.Pet", "Pets")
+                    b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
                         .WithMany("PLaytimes")
                         .HasForeignKey("PetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pets");
+                    b.Navigation("Pet");
                 });
 
             modelBuilder.Entity("TamagotchiAPI.Models.Scolding", b =>
                 {
-                    b.HasOne("TamagotchiAPI.Models.Pet", "Pets")
+                    b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
                         .WithMany("Scoldings")
                         .HasForeignKey("PetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pets");
+                    b.Navigation("Pet");
                 });
 
             modelBuilder.Entity("TamagotchiAPI.Models.Pet", b =>
