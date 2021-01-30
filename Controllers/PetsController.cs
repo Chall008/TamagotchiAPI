@@ -253,7 +253,7 @@ namespace TamagotchiAPI.Controllers
             // pet by id and subtract five from its happiness level
             // It should also create a new Scolding for this pet and the current time.
 
-            pet.HappinessLevel -= 3;
+            pet.HappinessLevel -= 5;
             var scolding = new Scolding();
             scolding.When = DateTime.Now;
             scolding.PetId = pet.Id;
