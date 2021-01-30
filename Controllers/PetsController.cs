@@ -48,7 +48,11 @@ namespace TamagotchiAPI.Controllers
         public async Task<ActionResult<Pet>> GetPet(int id)
         {
             // Find the pet in the database using `FindAsync` to look it up by id
-            var pet = await _context.Pets.FindAsync(id);
+            // created a v called pet 
+            //
+            var pet = await _context.Pets.Include(p => p.PLaytimes).Include(f => f.Feedings).Include(s => s.Scoldings).Where(w => w.Id == id).ToListAsync();
+            // ADD .ThenInclude(f => f.Feedings).ThenInclude(s => s.Scoldings)
+
 
             // If we didn't find anything, we receive a `null` in return
             if (pet == null)
@@ -58,7 +62,7 @@ namespace TamagotchiAPI.Controllers
             }
 
             // Return the pet as a JSON object.
-            return pet;
+            return pet[0];
         }
 
         // PUT: api/Pets/5
@@ -134,10 +138,6 @@ namespace TamagotchiAPI.Controllers
             // pet.HappinessLevel = 0;
 
 
-            // for pets hungerlevel = 0;
-            //for pets happinesslevel = 0;
-
-
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
 
@@ -173,10 +173,98 @@ namespace TamagotchiAPI.Controllers
             return Ok(pet);
         }
 
-        // Private helper method that looks up an existing pet by the supplied id
         private bool PetExists(int id)
         {
             return _context.Pets.Any(pet => pet.Id == id);
         }
+
+
+        [HttpPost("{id}/Playtimes")]
+        public async Task<ActionResult<Playtime>> CreatePlaytimeForPet(int id)
+        {
+            // POST / pets /{ id}/ playtimes should find the pet by id and add five to its happiness level and add three to its hunger level. 
+            // It should also create a new Playtime for this pet and the current time.
+
+            var pet = await _context.Pets.FindAsync(id);
+
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a game with this id
+                return NotFound();
+            }
+
+            // Associate the player to the given game.
+            pet.HungerLevel += 3;
+            pet.HappinessLevel += 5;
+            var playtime = new Playtime();
+            playtime.When = DateTime.Now;
+            playtime.PetId = pet.Id;
+
+            _context.Playtimes.Add(playtime);
+            await _context.SaveChangesAsync();
+
+            return Ok(playtime);
+        }
+
+        [HttpPost("{id}/Feedings")]
+        public async Task<ActionResult<Feeding>> CreateFeedingsForPet(int id)
+        {
+            // POST / pets /{ id}/ playtimes should find the pet by id and add five to its happiness level and add three to its hunger level. 
+            // It should also create a new Playtime for this pet and the current time.
+
+            var pet = await _context.Pets.FindAsync(id);
+
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a game with this id
+                return NotFound();
+            }
+
+            // Associate the player to the given game.
+            // pet by id and subtract five from its hungry level and add three to its happiness level
+            pet.HungerLevel -= 5;
+            pet.HappinessLevel += 3;
+            var feeding = new Feeding();
+            feeding.When = DateTime.Now;
+            feeding.PetId = pet.Id;
+
+            _context.Feedings.Add(feeding);
+            await _context.SaveChangesAsync();
+
+            return Ok(feeding);
+        }
+
+
+        [HttpPost("{id}/Scoldings")]
+        public async Task<ActionResult<Scolding>> CreateScoldingsForPet(int id)
+        {
+            // POST / pets /{ id}/ playtimes should find the pet by id and add five to its happiness level and add three to its hunger level. 
+            // It should also create a new Playtime for this pet and the current time.
+
+            var pet = await _context.Pets.FindAsync(id);
+
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a game with this id
+                return NotFound();
+            }
+
+            // Associate the player to the given game.
+            // pet by id and subtract five from its happiness level
+            // It should also create a new Scolding for this pet and the current time.
+
+            pet.HappinessLevel -= 3;
+            var scolding = new Scolding();
+            scolding.When = DateTime.Now;
+            scolding.PetId = pet.Id;
+
+            _context.Scoldings.Add(scolding);
+            await _context.SaveChangesAsync();
+
+            return Ok(scolding);
+        }
+
+
+
     }
 }
